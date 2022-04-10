@@ -2,7 +2,7 @@
 
 HackerOne API Client in Go.
 
-Current supports the entire _Hackers_ API. Support for the _Customers_ API may be added in future if there is any demand.
+Current supports the entire [Hackers API](https://api.hackerone.com/getting-started-hacker-api/#getting-started-hacker-api). Support for the _Customers_ API may be added in future if there is any demand.
 
 Please see the [documentation](https://pkg.go.dev/github.com/liamg/hackerone) for further information.
 
