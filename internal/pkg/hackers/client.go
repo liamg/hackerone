@@ -1,4 +1,4 @@
-package hacker
+package hackers
 
 import "github.com/liamg/hackerone/internal/pkg/client"
 

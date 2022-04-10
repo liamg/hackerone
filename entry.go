@@ -2,12 +2,11 @@ package hackerone
 
 import (
 	"github.com/liamg/hackerone/internal/pkg/client"
-	"github.com/liamg/hackerone/internal/pkg/hacker"
+	"github.com/liamg/hackerone/internal/pkg/hackers"
 )
 
 type API struct {
-	//Customers customer.Client
-	Hackers *hacker.API
+	Hackers *hackers.API
 }
 
 func New(username, apiKey string) *API {
@@ -15,6 +14,6 @@ func New(username, apiKey string) *API {
 	c := client.New(username, apiKey)
 
 	return &API{
-		Hackers: hacker.New(c),
+		Hackers: hackers.New(c),
 	}
 }

@@ -2,19 +2,6 @@ package api
 
 import "time"
 
-type NewReport struct {
-	Type       string `json:"type"`
-	Attributes struct {
-		TeamHandle               string `json:"team_handle"`
-		Title                    string `json:"title"`
-		VulnerabilityInformation string `json:"vulnerability_information"`
-		Impact                   string `json:"impact"`
-		SeverityRating           string `json:"severity_rating"`
-		WeaknessId               int    `json:"weakness_id"`
-		StructuredScopeId        int    `json:"structured_scope_id"`
-	} `json:"attributes"`
-}
-
 type Report struct {
 	Id         string `json:"id"`
 	Type       string `json:"type"`
@@ -49,8 +36,9 @@ type Report struct {
 		Reporter *struct {
 			Data User `json:"data"`
 		} `json:"reporter"`
-		Assignee *struct { // TODO: this should support user and group
-			Data User `json:"data"`
+		Assignee *struct {
+			// TODO: this should support user and group
+			//Data User `json:"data"`
 		} `json:"assignee"`
 		Weakness *struct {
 			Data Weakness `json:"data"`
@@ -83,4 +71,14 @@ type Report struct {
 			Data CustomRemediationGuidance `json:"data"`
 		} `json:"custom_remediation_guidance"`
 	} `json:"relationships"`
+}
+
+type CreateReportInput struct {
+	TeamHandle               string `json:"team_handle"`
+	Title                    string `json:"title"`
+	VulnerabilityInformation string `json:"vulnerability_information"`
+	Impact                   string `json:"impact"`
+	SeverityRating           string `json:"severity_rating"`
+	WeaknessId               int    `json:"weakness_id"`
+	StructuredScopeId        int    `json:"structured_scope_id"`
 }
