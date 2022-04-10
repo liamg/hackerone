@@ -37,6 +37,9 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 			if err := json.NewDecoder(resp.Body).Decode(&apiError); err != nil || apiError.Status == 0 {
 				return fmt.Errorf("server error: status %d", resp.StatusCode)
 			}
+			if resp.StatusCode < 500 {
+				return retry.Unrecoverable(&apiError)
+			}
 			return &apiError
 		}
 		response = resp
