@@ -1,8 +1,12 @@
 package client
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/liamg/hackerone/internal/pkg/api"
 
 	"github.com/avast/retry-go"
 )
@@ -28,8 +32,12 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 			return err
 		}
 		if resp.StatusCode >= 400 {
-			_ = resp.Body.Close()
-			return &APIError{StatusCode: resp.StatusCode}
+			defer func() { _ = resp.Body.Close() }()
+			var apiError api.Error
+			if err := json.NewDecoder(resp.Body).Decode(&apiError); err != nil || apiError.Status == 0 {
+				return fmt.Errorf("server error: status %d", resp.StatusCode)
+			}
+			return &apiError
 		}
 		response = resp
 		return nil

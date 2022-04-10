@@ -49,7 +49,7 @@ func (c *Client) url(path string) string {
 	if strings.Contains(path, "://") {
 		return path
 	}
-	return strings.TrimSuffix(c.baseURL, "/") + path
+	return c.baseURL + path
 }
 
 func (c *Client) do(method, path string, target interface{}, body io.Reader) error {
