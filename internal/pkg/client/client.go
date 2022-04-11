@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net"
@@ -52,8 +53,8 @@ func (c *Client) url(path string) string {
 	return c.baseURL + path
 }
 
-func (c *Client) do(method, path string, target interface{}, body io.Reader) error {
-	req, err := http.NewRequest(method, c.url(path), body)
+func (c *Client) do(ctx context.Context, method, path string, target interface{}, body io.Reader) error {
+	req, err := http.NewRequestWithContext(ctx, method, c.url(path), body)
 	if err != nil {
 		return err
 	}
@@ -69,26 +70,26 @@ func (c *Client) do(method, path string, target interface{}, body io.Reader) err
 	return json.NewDecoder(resp.Body).Decode(target)
 }
 
-func (c *Client) Get(path string, target interface{}) error {
-	return c.do(http.MethodGet, path, target, nil)
+func (c *Client) Get(ctx context.Context, path string, target interface{}) error {
+	return c.do(ctx, http.MethodGet, path, target, nil)
 }
 
-func (c *Client) Post(path string, target interface{}, body interface{}) error {
+func (c *Client) Post(ctx context.Context, path string, target interface{}, body interface{}) error {
 	buffer := bytes.NewBuffer([]byte{})
 	if err := json.NewEncoder(buffer).Encode(body); err != nil {
 		return err
 	}
-	return c.do(http.MethodPost, path, target, buffer)
+	return c.do(ctx, http.MethodPost, path, target, buffer)
 }
 
-func (c *Client) Delete(path string) error {
-	return c.do(http.MethodDelete, path, nil, nil)
+func (c *Client) Delete(ctx context.Context, path string) error {
+	return c.do(ctx, http.MethodDelete, path, nil, nil)
 }
 
-func (c *Client) Patch(path string, target interface{}, body interface{}) error {
+func (c *Client) Patch(ctx context.Context, path string, target interface{}, body interface{}) error {
 	buffer := bytes.NewBuffer([]byte{})
 	if err := json.NewEncoder(buffer).Encode(body); err != nil {
 		return err
 	}
-	return c.do(http.MethodPatch, path, target, buffer)
+	return c.do(ctx, http.MethodPatch, path, target, buffer)
 }

@@ -12,6 +12,7 @@ Please see the [documentation](https://pkg.go.dev/github.com/liamg/hackerone) fo
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/liamg/hackerone"
@@ -19,10 +20,9 @@ import (
 
 func main() {
 	h1 := hackerone.New("your-username-here", "your-api-key-here")
-	reports, _, _ := h1.Hackers.GetReports(nil)
+	reports, _, _ := h1.Hackers.GetReports(context.TODO(), nil)
 	for _, report := range reports {
 		fmt.Println(report.Id)
 	}
 }
-
 ```

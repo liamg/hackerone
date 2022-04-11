@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -31,7 +32,7 @@ func Test_Auth(t *testing.T) {
 	})
 
 	client := New(expectedUsername, expectedPassword, OptionWithBaseURL(server.URL))
-	err := client.Get("/testing", nil)
+	err := client.Get(context.TODO(), "/testing", nil)
 	require.NoError(t, err)
 
 	assert.True(t, hasBasicAuth)
@@ -60,7 +61,7 @@ func Test_Get(t *testing.T) {
 
 	client := New("", "", OptionWithBaseURL(server.URL))
 	var actual example
-	err := client.Get("/testing", &actual)
+	err := client.Get(context.TODO(), "/testing", &actual)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.MethodGet, actualMethod)
@@ -94,7 +95,7 @@ func Test_Post(t *testing.T) {
 	})
 
 	client := New("", "", OptionWithBaseURL(server.URL))
-	err := client.Post("/testing", &actualResponse, expectedRequest)
+	err := client.Post(context.TODO(), "/testing", &actualResponse, expectedRequest)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.MethodPost, actualMethod)
@@ -129,7 +130,7 @@ func Test_Patch(t *testing.T) {
 	})
 
 	client := New("", "", OptionWithBaseURL(server.URL))
-	err := client.Patch("/testing", &actualResponse, expectedRequest)
+	err := client.Patch(context.TODO(), "/testing", &actualResponse, expectedRequest)
 	require.NoError(t, err)
 
 	assert.Equal(t, http.MethodPatch, actualMethod)
@@ -148,7 +149,7 @@ func Test_Delete(t *testing.T) {
 	})
 
 	client := New("", "", OptionWithBaseURL(server.URL))
-	err := client.Delete("/testing")
+	err := client.Delete(context.TODO(), "/testing")
 	require.NoError(t, err)
 	assert.Equal(t, http.MethodDelete, actualMethod)
 }
@@ -176,7 +177,7 @@ func Test_Retries(t *testing.T) {
 
 	client := New("", "", OptionWithBaseURL(server.URL))
 	var actual example
-	err := client.Get("/testing", &actual)
+	err := client.Get(context.TODO(), "/testing", &actual)
 	require.NoError(t, err)
 	assert.Equal(t, 4, count)
 	assert.Equal(t, expected, actual)
