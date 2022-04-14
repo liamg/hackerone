@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/liamg/hackerone/internal/pkg/api"
+	api2 "github.com/liamg/hackerone/pkg/api"
 )
 
 type getEarningsResponse struct {
-	Data  []api.Earning `json:"data"`
-	Links api.Links     `json:"links"`
+	Data  []api2.Earning `json:"data"`
+	Links api2.Links     `json:"links"`
 }
 
 // GetEarnings returns a list of earnings made by the hacker. If there are further pages, nextPage will be >0.
-func (a *API) GetEarnings(ctx context.Context, pageOptions *api.PageOptions) (earnings []api.Earning, nextPage int, err error) {
+func (a *API) GetEarnings(ctx context.Context, pageOptions *api2.PageOptions) (earnings []api2.Earning, nextPage int, err error) {
 	var response getEarningsResponse
 	path := fmt.Sprintf(
 		"/hackers/payments/earnings?page[number]=%d&page[size]=%d",

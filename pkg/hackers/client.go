@@ -1,6 +1,8 @@
 package hackers
 
-import "github.com/liamg/hackerone/internal/pkg/client"
+import (
+	"github.com/liamg/hackerone/pkg/client"
+)
 
 type API struct {
 	client *client.Client

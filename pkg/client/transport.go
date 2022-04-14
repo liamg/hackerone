@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/liamg/hackerone/internal/pkg/api"
+	"github.com/liamg/hackerone/pkg/api"
 
 	"github.com/avast/retry-go"
 )
