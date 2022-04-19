@@ -31,10 +31,10 @@ type Program struct {
 		Bookmarked                      bool       `json:"bookmarked"`
 		AllowsBountySplitting           bool       `json:"allows_bounty_splitting"`
 		OffersBounties                  bool       `json:"offers_bounties"`
-		Relationships                   struct {
-			StructuredScopes struct {
-				Data []StructuredScope `json:"data"`
-			} `json:"structured_scopes"`
-		} `json:"relationships"`
 	} `json:"attributes"`
+	Relationships struct {
+		StructuredScopes struct {
+			Data []StructuredScope `json:"data"`
+		} `json:"structured_scopes"`
+	} `json:"relationships"`
 }
