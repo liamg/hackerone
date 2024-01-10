@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/liamg/hackerone/pkg/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -66,6 +67,32 @@ func Test_Get(t *testing.T) {
 
 	assert.Equal(t, http.MethodGet, actualMethod)
 	assert.Equal(t, expected, actual)
+}
+
+func Test_Get_404(t *testing.T) {
+	mux := http.NewServeMux()
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	returned := api.Errors{
+		Errors: []api.Error{
+			{
+				Status: 404,
+				Detail: "Not Found",
+			},
+		},
+	}
+
+	mux.HandleFunc("/404", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(w).Encode(returned)
+	})
+
+	client := New("", "", OptionWithBaseURL(server.URL))
+	var actual example
+	err := client.Get(context.TODO(), "/404", &actual)
+	require.Error(t, err)
 }
 
 func Test_Post(t *testing.T) {

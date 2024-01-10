@@ -17,8 +17,7 @@ type transport struct {
 	apiKey     string
 }
 
-func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
-	var response *http.Response
+func (t *transport) RoundTrip(req *http.Request) (response *http.Response, err error) {
 	req.SetBasicAuth(t.username, t.apiKey)
 	options := []retry.Option{
 		retry.Delay(time.Millisecond * 100),
@@ -26,26 +25,25 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		retry.Attempts(10),
 		retry.LastErrorOnly(true),
 	}
-	if err := retry.Do(func() error {
+	err = retry.Do(func() error {
 		resp, err := t.underlying.RoundTrip(req)
 		if err != nil {
 			return err
 		}
 		if resp.StatusCode >= 400 {
-			defer func() { _ = resp.Body.Close() }()
-			var apiError api.Error
-			if err := json.NewDecoder(resp.Body).Decode(&apiError); err != nil || apiError.Status == 0 {
+			defer resp.Body.Close()
+			var apiErrors api.Errors
+			err := json.NewDecoder(resp.Body).Decode(&apiErrors)
+			if err != nil {
 				return fmt.Errorf("server error: status %d", resp.StatusCode)
 			}
 			if resp.StatusCode < 500 {
-				return retry.Unrecoverable(&apiError)
+				return retry.Unrecoverable(apiErrors.Error())
 			}
-			return &apiError
+			return apiErrors.Error()
 		}
 		response = resp
 		return nil
-	}, options...); err != nil {
-		return nil, err
-	}
-	return response, nil
+	}, options...)
+	return
 }
