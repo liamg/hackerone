@@ -22,7 +22,7 @@ func (t *transport) RoundTrip(req *http.Request) (response *http.Response, err e
 	options := []retry.Option{
 		retry.Delay(time.Millisecond * 100),
 		retry.DelayType(retry.BackOffDelay),
-		retry.Attempts(10),
+		retry.Attempts(5),
 		retry.LastErrorOnly(true),
 	}
 	err = retry.Do(func() error {
@@ -33,14 +33,18 @@ func (t *transport) RoundTrip(req *http.Request) (response *http.Response, err e
 		if resp.StatusCode >= 400 {
 			defer resp.Body.Close()
 			var apiErrors api.Errors
-			err := json.NewDecoder(resp.Body).Decode(&apiErrors)
+			err = json.NewDecoder(resp.Body).Decode(&apiErrors)
 			if err != nil {
-				return fmt.Errorf("server error: status %d", resp.StatusCode)
+				err = fmt.Errorf("server error: status %d, %s", resp.StatusCode, resp.Body)
+			} else {
+				err = apiErrors.Error()
 			}
 			if resp.StatusCode < 500 {
-				return retry.Unrecoverable(apiErrors.Error())
+				// Client error
+				return retry.Unrecoverable(err)
 			}
-			return apiErrors.Error()
+			// Server error
+			return err
 		}
 		response = resp
 		return nil
